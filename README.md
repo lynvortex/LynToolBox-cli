@@ -22,7 +22,12 @@ lyntoolbox.exe <命令> ...  ← 命令行模式（脚本/进阶）
 go build -ldflags "-s -w" -o lyntoolbox.exe .
 ```
 
-纯 Go 无 cgo；国内网络建议 `go env -w GOPROXY=https://goproxy.cn,direct`。
+纯 Go 无 cgo；国内网络建议 `go env -w GOPROXY=https://goproxy.cn,direct`。支持交叉编译，三平台均可构建：
+
+```bash
+GOOS=linux  go build -o lyntoolbox-linux .
+GOOS=darwin go build -o lyntoolbox-macos .
+```
 
 ## 全部命令（108 个）
 
@@ -76,7 +81,7 @@ go build -ldflags "-s -w" -o lyntoolbox.exe .
 | | `lorem` | 假文/Mock 数据 |
 | | `figlet` | ASCII 横幅 |
 | | `qrcode` | 二维码生成/识别/WiFi |
-| **E 网络工具（12）** | `ping` | 连通性测试 |
+| **E 网络工具（12）** | `ping` | 连通性测试（调用系统 ping，跨平台参数） |
 | | `portscan` | TCP 端口扫描 |
 | | `httpreq` | HTTP 请求模拟 |
 | | `httphead` | 响应头安全分析 |
@@ -119,7 +124,7 @@ go build -ldflags "-s -w" -o lyntoolbox.exe .
 | | `imgfilter` | 滤镜套件（9 种可组合） |
 | | `phash` | 感知哈希相似度 |
 | | `imgascii` | 图片转 ASCII |
-| | `stegano` | LSB 隐写 |
+| | `stegano` | LSB 隐写（口令加密为 PBKDF2 + AES-256-GCM） |
 | | `imgcolor` | 主色提取 |
 | | `placeholder` | 占位图生成 |
 | | `favicon` | 多尺寸 ICO 生成 |
@@ -137,7 +142,7 @@ go build -ldflags "-s -w" -o lyntoolbox.exe .
 | | `wavtool` | WAV 音频处理 |
 | | `svgmin` | SVG 压缩 |
 
-每个命令详情：`lyntoolbox <命令名> -h`。
+每个命令详情：`lyntoolbox <命令名> -h` 或 `lyntoolbox help <命令名>`。
 
 ## 仓库结构
 
@@ -147,15 +152,16 @@ interactive.go           交互式菜单框架与各工具的输入提示定义
 internal/toolreg/        命令注册结构
 internal/deps/           第三方依赖锁定（空白导入）
 tools/<命令名>/<命令名>.go   每个工具一个单文件实现
-pending/                 暂存区：未集成的工具源码（不参与编译）
 ```
 
 ## 约定
 
 - 新增工具：在 `tools/<命令名>/` 新建包，导出 `Name`/`Desc`/`Usage` 常量与 `Run(args []string) int`，在 `main.go` 的 `registerAll()` 注册；交互模式在 `interactive.go` 的 `interactivePrompts` 补一条输入定义。
-- 退出码：0 成功 / 1 运行错误 / 2 用法错误。
+- 退出码：0 成功（含 `-h`/帮助输出）/ 1 运行错误 / 2 用法错误。
 - 依赖白名单见 `internal/deps/deps.go`；新增依赖需同步更新。
 
 ## 状态
 
 v1.0.0 · 108 个命令全部可用，11 个分组。加密类实现经标准向量验证（SM3/HMAC/PBKDF2/RFC 6238 TOTP），图片/文档工具经往返实测。
+
+安全基线：解包类工具（epubx/zipx）防路径穿越；解压与网络响应有内存上限；口令加密使用随机盐 + 认证加密，无硬编码默认密钥；Windows/Linux/macOS 三平台可编译。
