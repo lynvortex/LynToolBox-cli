@@ -46,6 +46,9 @@ func Run(args []string) int {
 	level := fs.String("level", "M", "纠错级别 L|M|Q|H")
 	fs.Usage = func() { fmt.Print(Usage + "\n") }
 	if err := fs.Parse(args); err != nil {
+		if err == flag.ErrHelp {
+			return 0
+		}
 		return 2
 	}
 	if fs.NArg() == 0 {
@@ -125,6 +128,9 @@ func runWifi(args []string) int {
 	level := fs.String("level", "M", "纠错级别")
 	fs.Usage = func() { fmt.Print(Usage + "\n") }
 	if err := fs.Parse(args); err != nil {
+		if err == flag.ErrHelp {
+			return 0
+		}
 		return 2
 	}
 	if *ssid == "" {
@@ -154,6 +160,9 @@ func runDecode(args []string) int {
 	fs := flag.NewFlagSet("decode", flag.ContinueOnError)
 	fs.Usage = func() { fmt.Print(Usage + "\n") }
 	if err := fs.Parse(args); err != nil {
+		if err == flag.ErrHelp {
+			return 0
+		}
 		return 2
 	}
 	if fs.NArg() != 1 {

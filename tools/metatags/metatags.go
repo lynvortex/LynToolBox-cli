@@ -39,6 +39,9 @@ func Run(args []string) int {
 	locale := fs.String("locale", "zh_CN", "og:locale")
 	fs.Usage = func() { fmt.Print(Usage + "\n") }
 	if err := fs.Parse(args); err != nil {
+		if err == flag.ErrHelp {
+			return 0
+		}
 		return 2
 	}
 	if *title == "" || *desc == "" {

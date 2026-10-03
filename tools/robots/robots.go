@@ -32,6 +32,9 @@ func Run(args []string) int {
 	delay := fs.Int("delay", 0, "Crawl-delay 秒")
 	fs.Usage = func() { fmt.Print(Usage + "\n") }
 	if err := fs.Parse(args); err != nil {
+		if err == flag.ErrHelp {
+			return 0
+		}
 		return 2
 	}
 

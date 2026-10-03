@@ -69,6 +69,9 @@ func Run(args []string) int {
 	var positionals []string
 	for {
 		if err := fs.Parse(rest); err != nil {
+			if err == flag.ErrHelp {
+				return 0
+			}
 			return 2
 		}
 		rem := fs.Args()
@@ -213,10 +216,16 @@ func Run(args []string) int {
 		fmt.Println()
 	}
 
-	raw, err := io.ReadAll(resp.Body)
+	// 64 MiB 上限防止超大响应撑爆内存
+	const maxBody = 64 << 20
+	raw, err := io.ReadAll(io.LimitReader(resp.Body, maxBody+1))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "读取响应体失败: %v\n", err)
 		return 1
+	}
+	if len(raw) > maxBody {
+		fmt.Fprintf(os.Stderr, "警告: 响应体超过 64 MiB，已截断\n")
+		raw = raw[:maxBody]
 	}
 
 	if *out != "" {

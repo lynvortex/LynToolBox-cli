@@ -223,6 +223,9 @@ func Run(args []string) int {
 	out := fs.String("o", "", "输出文件")
 	fs.Usage = func() { fmt.Print(Usage + "\n") }
 	if err := fs.Parse(args); err != nil {
+		if err == flag.ErrHelp {
+			return 0
+		}
 		return 2
 	}
 

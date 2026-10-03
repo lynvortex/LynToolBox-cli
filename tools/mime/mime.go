@@ -80,6 +80,9 @@ func Run(args []string) int {
 	var positionals []string
 	for {
 		if err := fs.Parse(rest); err != nil {
+			if err == flag.ErrHelp {
+				return 0
+			}
 			return 2
 		}
 		rem := fs.Args()

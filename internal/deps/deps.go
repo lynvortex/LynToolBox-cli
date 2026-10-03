@@ -28,7 +28,6 @@ import (
 	_ "golang.org/x/image/tiff"
 	_ "golang.org/x/image/webp"
 	_ "golang.org/x/net/html"
-	_ "golang.org/x/sys/windows"
 	_ "golang.org/x/text/encoding/simplifiedchinese"
 	_ "golang.org/x/text/encoding/traditionalchinese"
 	_ "golang.org/x/text/encoding/unicode"

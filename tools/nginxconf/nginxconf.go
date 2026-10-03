@@ -38,6 +38,9 @@ func Run(args []string) int {
 	cache := fs.Bool("cache", false, "静态资源缓存")
 	fs.Usage = func() { fmt.Print(Usage + "\n") }
 	if err := fs.Parse(args); err != nil {
+		if err == flag.ErrHelp {
+			return 0
+		}
 		return 2
 	}
 	if *proxy == "" && *root == "" {

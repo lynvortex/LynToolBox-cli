@@ -67,6 +67,9 @@ func Run(args []string) int {
 	w := fs.Int("w", 80, "换行宽度")
 	fs.Usage = func() { fmt.Print(Usage + "\n") }
 	if err := fs.Parse(args); err != nil {
+		if err == flag.ErrHelp {
+			return 0
+		}
 		return 2
 	}
 	if fs.NArg() == 0 {
