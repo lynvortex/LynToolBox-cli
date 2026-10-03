@@ -125,7 +125,7 @@ func quoteLiteral(dialect, s string) string {
 		return "'" + strings.ReplaceAll(s, "'", "''") + "'"
 	}
 	// MySQL 默认启用反斜杠转义，必须先转义 \ 再转义 '，否则值可逃逸出字符串
-r := strings.NewReplacer(`\`, `\\`, "'", `\'`)
+	r := strings.NewReplacer(`\`, `\\`, "'", `\'`)
 	return "'" + r.Replace(s) + "'"
 }
 
